@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../../api/axios'
 import toast from 'react-hot-toast'
+import useAuthStore from '../../store/authStore'
 
 function Avatar({ name }) {
   return (
@@ -11,6 +12,7 @@ function Avatar({ name }) {
 }
 
 export default function Friends() {
+  const currentUser = useAuthStore(s => s.user)
   const [friends, setFriends] = useState([])
   const [requests, setRequests] = useState([])
   const [search, setSearch] = useState('')
@@ -70,7 +72,8 @@ export default function Friends() {
     }
   }
 
-  const incoming = requests.filter(r => r.status === 'pending' && r.to_user)
+  // Only requests addressed TO me — not the ones I sent
+  const incoming = requests.filter(r => r.status === 'pending' && r.to_user?.id === currentUser?.id)
 
   return (
     <div className="max-w-2xl mx-auto">

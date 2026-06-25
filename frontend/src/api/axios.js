@@ -1,7 +1,13 @@
 import axios from 'axios'
 
+// In dev the Vite proxy handles '/api'. In production set VITE_API_URL to the
+// backend origin (e.g. https://eventhub-backend.onrender.com) or bare host.
+const raw = import.meta.env.VITE_API_URL
+const origin = raw ? (raw.startsWith('http') ? raw : `https://${raw}`) : ''
+const API_BASE = origin ? `${origin.replace(/\/$/, '')}/api` : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -20,7 +26,7 @@ api.interceptors.response.use(
       const refresh = localStorage.getItem('refresh')
       if (refresh) {
         try {
-          const { data } = await axios.post('/api/token/refresh/', { refresh })
+          const { data } = await axios.post(`${API_BASE}/token/refresh/`, { refresh })
           localStorage.setItem('access', data.access)
           original.headers.Authorization = `Bearer ${data.access}`
           return api(original)

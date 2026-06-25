@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+backend/venv/
+backend/staticfiles/
+
+# SQLite runtime files (the committed db.sqlite3 ships as demo data)
+backend/db.sqlite3-shm
+backend/db.sqlite3-wal
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Env / secrets
+.env.local
+*.local

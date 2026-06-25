@@ -98,7 +98,11 @@ class ConfirmPaymentView(APIView):
             defaults={'status': EventRegistration.STATUS_REGISTERED}
         )
 
-        send_registration_email.delay(request.user.id, event.id)
+        # Email is non-critical — never let it fail the payment confirmation
+        try:
+            send_registration_email.delay(request.user.id, event.id)
+        except Exception:
+            pass
 
         return Response({
             'status': 'success',

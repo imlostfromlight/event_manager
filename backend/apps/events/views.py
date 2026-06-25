@@ -34,7 +34,11 @@ class EventViewSet(viewsets.ModelViewSet):
             'registrations', 'favorited_by'
         )
         # Private events visible only to organizer or via private_token
-        if not user.is_authenticated or user.role == 'participant':
+        if not user.is_authenticated:
+            qs = qs.filter(
+                visibility=Event.VISIBILITY_PUBLIC, status=Event.STATUS_PUBLISHED
+            )
+        elif user.role == 'participant':
             qs = qs.filter(
                 Q(visibility=Event.VISIBILITY_PUBLIC) | Q(organizer=user)
             ).filter(status=Event.STATUS_PUBLISHED)

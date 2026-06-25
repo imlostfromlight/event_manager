@@ -69,6 +69,11 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         fields = ['id', 'from_user', 'to_user', 'to_user_id', 'status', 'created_at']
         read_only_fields = ['id', 'from_user', 'status', 'created_at']
 
+    def validate_to_user_id(self, value):
+        if value == self.context['request'].user:
+            raise serializers.ValidationError('Нельзя отправить запрос самому себе.')
+        return value
+
     def create(self, validated_data):
         validated_data['from_user'] = self.context['request'].user
         return super().create(validated_data)
